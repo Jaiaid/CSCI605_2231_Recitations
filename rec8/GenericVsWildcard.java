@@ -90,6 +90,6 @@ public class GenericVsWildcard {
         // following line will give error as trivialMethodObject expects Object
         // if we want to pass List of anything we don't have alternative to wildcard
         trivialMethodObject(arrayList);
-        System.out.println();
+        System.out.println(arrayList);
     }
 }
