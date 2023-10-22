@@ -16,7 +16,7 @@ class GenericContainer<T> {
     public T getData() {
         return this.data;
     }
-    
+
     public void setData(T data) {
         this.data = data;
     }
@@ -71,8 +71,8 @@ public class GenericVsWildcard {
     }
 
     /**
-     * But could not we do it with object?
-     * 
+     * But could not we do it with object as everything is object?
+     * See the problem in main
      * 
      */
     static List<Object> trivialMethodObject(List<Object> list) {
@@ -86,6 +86,9 @@ public class GenericVsWildcard {
         // now to print it
         ArrayList<String> arrayList = new ArrayList<String>(10);
         trivialMethod(arrayList);
+        // can we pass arrayList to trivialMethodObject?
+        // following line will give error as trivialMethodObject expects Object
+        // if we want to pass List of anything we don't have alternative to wildcard
         trivialMethodObject(arrayList);
         System.out.println();
     }
