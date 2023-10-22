@@ -87,8 +87,13 @@ public class GenericVsWildcard {
         ArrayList<String> arrayList = new ArrayList<String>(10);
         trivialMethod(arrayList);
         // can we pass arrayList to trivialMethodObject?
-        // following line will give error as trivialMethodObject expects Object
+        // following line will give error as trivialMethodObject strictly expects Object
         // if we want to pass List of anything we don't have alternative to wildcard
+        // although String is subclass of Object
+        // Here we want subtype of List<Object>
+        // In generic for subtyping we need ?/wildcard
+        // for detail of subtyping check
+        // https://docs.oracle.com/javase/tutorial/java/generics/subtyping.html
         trivialMethodObject(arrayList);
         System.out.println(arrayList);
     }
