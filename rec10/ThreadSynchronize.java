@@ -21,7 +21,10 @@ public class ThreadSynchronize extends Thread {
     }
 
     public static synchronized void syncMethod() {
-        // System.out.println("Thread " + id + " execution completed");
+        for (int i = 0;i < 20;i++)
+        {
+            System.out.println(i);
+        }
     }
     /**
      * main method

@@ -1,3 +1,6 @@
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
 class ThreadType1 extends Thread {
     ThreadType1(ThreadGroup group, String name) {
         super(group, name);
@@ -28,15 +31,11 @@ class ThreadType3 extends Thread {
     }
 }
 
-public class ThreadGroupExample {
-    ThreadGroup workersGroup;
-    Thread[] threadCollection;
-    int workerCount;
+public class ThreadPoolExample {
+    ThreadPoolExecutor workersGroup;
 
-    ThreadGroupExample(String name, int count) {
-        workersGroup = new ThreadGroup(name);
-        threadCollection = new Thread[count];
-        workerCount = 0;
+    ThreadPoolExample(String name, int count) {
+        workersGroup = new ThreadPoolExecutor(count, count, 10, TimeUnit.MINUTES, );
     }
 
     public ThreadGroup getWorkersGroup() {
