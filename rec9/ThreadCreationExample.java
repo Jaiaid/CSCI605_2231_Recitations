@@ -5,6 +5,7 @@
  * 2. Implement Runnable interface and 
  * create Thread object from that Runnable
  * 
+ * Thread object itself implements Runnable
  */
 public class ThreadCreationExample extends Thread {
     // an id number to identify the thread
@@ -15,6 +16,10 @@ public class ThreadCreationExample extends Thread {
      * @param id to init id field
      */
     ThreadCreationExample(int id) {
+        // Thread(String name) constructor
+        // initiate name field of Thread object
+        // https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html
+        super(String.valueOf(id));
         this.id = id;
     }
 
@@ -23,17 +28,17 @@ public class ThreadCreationExample extends Thread {
      * 
      * run method contains the code which will be executed in that thread
      * here we will run a loop for 20 iteration 
-     * at each iteration the thread id with iteration number will be printed
+     * at each iteration the thread name with iteration number will be printed
      * 
      * Finally, at the finishing an execution completed message will be printed 
      */
     public void run() {
-        
         for (int i = 0;i < 20;i++)
         {
-            System.out.println("Thread " + this.id + ":" + i);
+            // getName() is inherited from Thread
+            System.out.println("Thread named " + getName() + " at iteration:" + i);
         }
-        System.out.println("Thread " + id + " execution completed");
+        System.out.println("Thread named " + getName() + " execution completed");
     }
     /**
      * main method

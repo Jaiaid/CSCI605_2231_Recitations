@@ -55,6 +55,8 @@ public class ThreadJoin extends Thread {
             // this means main thread will not start executing until t1 is finished
             // this is guaranteed unless error/exception
             t1.join();
+            // following line won't be executed until t1 is done
+            System.out.println("joined with t1");
             // notice we are not joining with t2
             // that does not mean main thread will always finish before t2
             // it still may finish after t2 but it is unpredictable (JVM, OS scheduler wish)
