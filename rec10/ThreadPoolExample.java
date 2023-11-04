@@ -1,9 +1,30 @@
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Please note, threadpoolexecutor is possibly not part of syllabus
+ * 
+ * Creating thread is expensive
+ * What if we have steady stream of cmd which consists of tasks
+ * which can be concurrent
+ * Should we create thread each time a new task arrives?
+ * 
+ * ThreadPoolExecutor gives a solution (https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ThreadPoolExecutor.html)
+ * It maintains a pool of created thread
+ * new task arrives and it allocates that to a free thread
+ * 
+ * A task is modeled by run method got by implementing Runnable
+ * extending Thread will also work because 
+ * Thread class implements Runnable (https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html)
+ */
+
+/**
+ * Task type 1
+ */
 class ThreadType1 extends Thread {
-    ThreadType1(ThreadGroup group, String name) {
-        super(group, name);
+    ThreadType1(String name) {
+        super(name);
     }
 
     public void run() {
@@ -11,9 +32,12 @@ class ThreadType1 extends Thread {
     }
 }
 
+/**
+ * Task type 2
+ */
 class ThreadType2 extends Thread {
-    ThreadType2(ThreadGroup group, String name) {
-        super(group, name);
+    ThreadType2(String name) {
+        super(name);
     }
 
     public void run() {
@@ -21,58 +45,74 @@ class ThreadType2 extends Thread {
     }
 }
 
-class ThreadType3 extends Thread {
-    ThreadType3(ThreadGroup group, String name) {
-        super(group, name);
+/**
+ * Task type 2
+ */
+class ThreadType3 implements Runnable {
+    String name;
+    ThreadType3(String name) {
+        // not extending Thread so no super
+        this.name = name;
     }
 
     public void run() {
-        System.out.println("Hello from thread " + getName() + " of type ThreadType3");
+        System.out.println("Hello from thread " + name + " of type ThreadType3");
     }
 }
 
 public class ThreadPoolExample {
+    String taskgroupName;
+    ArrayBlockingQueue<Runnable> taskqueue;
     ThreadPoolExecutor workersGroup;
 
-    ThreadPoolExample(String name, int count) {
-        workersGroup = new ThreadPoolExecutor(count, count, 10, TimeUnit.MINUTES, );
+    ThreadPoolExample(String name, int maxconcurrenttask) {
+        // notice the ThreadPoolExecutor constructor
+        // it takes a Queue of Runnable
+        // this runnable's run method will have the task code
+        // for detail of the argument list
+        // https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ThreadPoolExecutor.html#ThreadPoolExecutor-int-int-long-java.util.concurrent.TimeUnit-java.util.concurrent.BlockingQueue-
+        this.taskgroupName = name;
+        // init taskqueue
+        taskqueue = new ArrayBlockingQueue<Runnable>(maxconcurrenttask);
+        // DON'T FORGET THREADPOOLEXECUTOR needs shutdown for proper closing of program
+        workersGroup = new ThreadPoolExecutor(
+            maxconcurrenttask, maxconcurrenttask,10,
+            TimeUnit.MINUTES, taskqueue);
     }
 
-    public ThreadGroup getWorkersGroup() {
+    /**
+     * important to shutdown threadpool
+     */
+    void cleanup() {
+        workersGroup.shutdown();
+    }
+
+    public String getName() {
+        return taskgroupName;
+    }
+
+    public ThreadPoolExecutor getWorkersGroup() {
         return workersGroup;
     }
 
-    public void startWork() {
-        for(int i = 0;i < threadCollection.length; i++) {
-            threadCollection[i].start();
-        }
-    }
-
-    boolean addThread(Thread threadObject) {
-        if (workerCount == threadCollection.length) {
-            return false;
-        } 
-        threadCollection[workerCount] = threadObject;
-        workerCount++;
-        return true;
-    }
-
     public static void main(String args[]) {
-        ThreadGroupExample workers = new ThreadGroupExample("CSCI605_students", 6);
+        // creating a thread pool to execute tasks concurrently
+        // assuming maximum concurrent task is 6
+        // this count is design choice
+        ThreadPoolExample workers = new ThreadPoolExample("CSCI605_students_tasks", 6);
 
         for (int i = 0;i <6;i++) {
             if (i%3 == 0) {
-                workers.addThread(new ThreadType3(workers.getWorkersGroup(), String.valueOf(i)));
+                workers.getWorkersGroup().execute(new ThreadType3("t1"));
             }
             else if (i%2 == 0) {
-                workers.addThread(new ThreadType2(workers.getWorkersGroup(), String.valueOf(i)));
+                workers.getWorkersGroup().execute(new ThreadType2("t2"));
             }
             else {
-                workers.addThread(new ThreadType1(workers.getWorkersGroup(), String.valueOf(i)));
+                workers.getWorkersGroup().execute(new ThreadType1("t3"));
             }
         }
-
-        workers.startWork();
-        workers.getWorkersGroup().list();
+        // important to do cleanup
+        workers.cleanup();
     }
 }
