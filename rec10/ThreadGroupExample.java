@@ -1,3 +1,10 @@
+/**
+ * ThreadGroup is very old way of managing collection of Thread
+ * https://docs.oracle.com/javase/8/docs/api/java/lang/ThreadGroup.html
+ * 
+ * Not very convenient, for better approach check ThreadPoolExecutor
+ */
+
 class ThreadType1 extends Thread {
     ThreadType1(ThreadGroup group, String name) {
         super(group, name);
