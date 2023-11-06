@@ -13,6 +13,8 @@ import java.util.concurrent.TimeUnit;
  * ThreadPoolExecutor gives a solution (https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ThreadPoolExecutor.html)
  * It maintains a pool of created thread
  * new task arrives and it allocates that to a free thread
+ * by default it creates non-daemon thread which can cause following problem
+ * https://stackoverflow.com/questions/20057497/program-does-not-terminate-immediately-when-all-executorservice-tasks-are-done
  * 
  * A task is modeled by run method got by implementing Runnable
  * extending Thread will also work because 
@@ -75,6 +77,7 @@ public class ThreadPoolExample {
         // init taskqueue
         taskqueue = new ArrayBlockingQueue<Runnable>(maxconcurrenttask);
         // DON'T FORGET THREADPOOLEXECUTOR needs shutdown for proper closing of program
+        // Check this https://stackoverflow.com/a/20057584
         workersGroup = new ThreadPoolExecutor(
             maxconcurrenttask, maxconcurrenttask,10,
             TimeUnit.MINUTES, taskqueue);
@@ -82,6 +85,8 @@ public class ThreadPoolExample {
 
     /**
      * important to shutdown threadpool
+     * as default ThreadFactory of ThreadPoolExecutor creates non-daemon thread
+     * therefore program will not close until they are closed
      */
     void cleanup() {
         workersGroup.shutdown();
