@@ -6,6 +6,7 @@ import java.io.OutputStreamWriter;
 import java.io.StringReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Scanner;
 
 /**
  * A chat application using TCP socket between localhost application
@@ -23,6 +24,7 @@ public class TCPSocketComExample extends Thread {
     public TCPSocketComExample(boolean isClient) {
         connectionSuccess = false;
         this.isClient = isClient;
+
         if (isClient) {
             // will try to connect 10 times
             int connectionAttempt = 1;
@@ -61,32 +63,45 @@ public class TCPSocketComExample extends Thread {
     }
 
     public void run() {
+        if (!connectionSuccess) {
+            return;
+        }
+
         if (isClient) {
-            // ServerSocket wait for connection through this 
-            Socket clientConnection = sSocket.accept();
-            // print client prop
-            System.out.printf(
-                "Client connected from %s:%d\n",
-                clientConnection.getRemoteSocketAddress().toString(), clientConnection.getPort());
+            try{
+                // print client prop
+                System.out.printf(
+                    "Client connected to %s:%d\n",
+                    socket.getRemoteSocketAddress().toString(), socket.getPort());
 
-            InputStream in = clientConnection.getInputStream();
-            OutputStream out = clientConnection.getOutputStream();
-            // for convenience create a character stream
-            InputStreamReader reader = new InputStreamReader(in);
-            OutputStreamWriter writer = new OutputStreamWriter(out);
+                InputStream in = socket.getInputStream();
+                OutputStream out = socket.getOutputStream();
+                // for convenience create a character stream
+                InputStreamReader reader = new InputStreamReader(in);
+                OutputStreamWriter writer = new OutputStreamWriter(out);
 
-            // our protocol is server first writes hello to client;                
-            String clientResponse = "continue";
-            while (!clientResponse.equals("exit")) {
-                char[] buf = new char[1024];
-                
+                Scanner sc = new Scanner(System.in);
+                // our protocol is client first reads from server;                
+                while (!socket.isClosed()) {
+                    char[] buf = new char[1024];
+                    int len = reader.read();
+                    // read from client
+                    String serverResponse = String.copyValueOf(buf, 0, len);
+                    if (serverResponse.equals("done")) {
+                        break;
+                    }
 
-                writer.write("hello");
-                // read from client
+                    System.out.printf("Server: %s %d\n", serverResponse, serverResponse.length());
+                    System.out.printf(">>>");
+                    writer.write(sc.nextLine());
+                    writer.flush();
+                }
 
-                reader.read(buf);
-
-                clientResponse = String.valueOf(buf);
+                sc.close();
+                socket.close();
+            }
+            catch (IOException e) {
+                e.printStackTrace();
             }
         }
         else {
@@ -106,15 +121,24 @@ public class TCPSocketComExample extends Thread {
 
                 // our protocol is server first writes hello to client;                
                 String clientResponse = "continue";
+                Scanner sc = new Scanner(System.in);
                 writer.write("hello");
-                while (!clientResponse.equals("exit")) {
+                writer.flush();
+                while (!clientConnection.isClosed() && !clientResponse.equals("exit")) {
                     char[] buf = new char[1024];
-                    
                     // read from client
-                    reader.read(buf);
-                    clientResponse = String.valueOf(buf);
-                }
+                    int len = reader.read(buf);
+                    clientResponse = String.copyValueOf(buf, 0, len);
+                    System.out.printf("Client: %s %d\n", clientResponse, clientResponse.length());
 
+                    // write something to client
+                    System.out.print(">>>");
+                    writer.write(sc.nextLine());
+                    writer.flush();
+                }
+                writer.write("done");
+
+                sc.close();
                 sSocket.close();
             } catch (IOException e) {
                 // TODO Auto-generated catch block
