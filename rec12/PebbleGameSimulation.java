@@ -3,6 +3,7 @@
  * Class containing static method for arge parse and main method
  * Design done following 
  * https://www.cs.rit.edu/~hpb/Lectures/2231/605/Src/11/Race_2.java
+ * Disclaimer: I have probably made it unnecessary complex
  * 
  * The program solves the problem by following
  * - parse args
