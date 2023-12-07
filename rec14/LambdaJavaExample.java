@@ -17,12 +17,11 @@ public class LambdaJavaExample {
     /** 
      * we want to get a sequence of ops which we will execute in seq
      * how can we get a sequence of ops? class/interface perhaps
-     * can we make it a little less verbose?
-     * 
-     * lets pass a list of lambda expression
+     * can we make it a little less verbose? 
+     * (when calling the function and passing parameters)
      * 
      */
-    public static int seqOps() {
-
+    public static int seqOps(List ) {
+        List<Lam>
     }
 }
