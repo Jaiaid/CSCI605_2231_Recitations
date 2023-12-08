@@ -3,20 +3,20 @@
  * to define single functionality interface using lambda expression
  * single functionality means the interface has only one method to implement
  * 
- * interface If {
+ * interface Iface {
  *  public void method1();
  * }
  *
- * If = () -> {}
+ * Iface ifInterface = () -> {}
  */
 public class FunctionalInterfaceLambdaExpressionExample {
     // a interface with void functionality
-    interface VoidOps {
-        void op();
+    static interface VoidOps {
+        public void op();
     };
     // a interface with int returning two int argument taking functionlity
-    interface MathOps {
-        int op(int a, int b);
+    static interface MathOps {
+        public int op(int a, int b);
     }
 
     /**

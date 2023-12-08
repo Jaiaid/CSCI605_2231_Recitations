@@ -67,11 +67,14 @@ public class StreamJavaExample {
         // you will be providing test method's implementation through lambda
         .filter((p)-> p.salary < 10000)
         // map can be used to apply custom operations
+        // can we parallelize this operation?
+        // check 
+        // https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/util/stream/BaseStream.html#parallel()
         .map((p) -> { System.out.println(p.id);return p.id;})
         // now to collect the processed data
         //
         // =====================================================================
-        // ALSO VERY IMPORTANT, CALLING COLLECT WILL ACTUALLY START THE PIPELINE
+        // ALSO VERY IMPORTANT, CALLING COLLECTION METHOD WILL ACTUALLY START THE PIPELINE
         // TRY TO DEFINE PIPELINE WITHOUT COLLECTING METHOD YOU WILL NOT HAVE EXECUTION
         // =====================================================================
         //
